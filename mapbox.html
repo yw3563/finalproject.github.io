@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>Display a map</title>
+  <title>Restaurants in Pandemic, Nov 2020</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src='../d3.js'></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
@@ -23,18 +23,29 @@
     top: 300px;
     right: 10px;
     border-radius: 3px;
-    width: 120px;
+    width: 150px;
     border: 2px solid rgba(0, 0, 0, 1);
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'helvetica', monospace;
+  }
+
+  #title {
+    background: #fff;
+    position: absolute;
+    font-family: 'helvetica', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 0px;
+    text-transform:uppercase;
+    border: 8px solid rgb(255, 255, 255);
   }
 
   #menu a {
-    font-size: 13px;
+    font-size: 18px;
     color: #404040;
     display: block;
     margin: 0;
     padding: 0;
-    padding: 10px;
+    padding: 19px;
     text-decoration: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
     text-align: center;
@@ -50,34 +61,34 @@
   }
 
   #menu a.active {
-    background-color: #3887be;
+    background-color: #4661a4;
     color: #ffffff;
   }
 
   #menu a.active:hover {
-    background: #3074a4;
+    background: #272172;
   }
 </style>
 
 <nav id="menu"></nav>
 <div id='map'></div>
-<div id='title'>Restaurants in COVID-19 Pandemic</div>
+<div id='title'>  Restaurants in Pandemic, Nov 2020  </div>
 
 <script>
 
  // Set bounds
 var bounds = [
 [-74.05, 40.695], // Southwest coordinates
-[-73.915, 40.78]  // Northeast coordinates
+[-73.915, 40.775]  // Northeast coordinates
 ];
 
 // load mapbox data
 mapboxgl.accessToken = 'pk.eyJ1IjoieXczNTYzIiwiYSI6ImNraGc0MXAzdTB2dHcyeHFwdXpsbm1scTMifQ.7nBjOVzW051AMgneu-NuQw';
 var map = new mapboxgl.Map({
   container: 'map',//thi sis the div that you have mad above in html that you are now placing your map in
-  style: 'mapbox://styles/yw3563/ckhgfy05n12u619t6rgzwodvz',//you will find the accessToken under "Share" in your specific map in mapbox studio
+  style: 'mapbox://styles/yw3563/ckitg42sj1vz419l3ae0m3rgl',//you will find the accessToken under "Share" in your specific map in mapbox studio
   center: [-73.982, 40.738],//the center of the map can be set to any initial value of [lng,lat]
-  zoom: 12.5,//note that some layers have zoom limits - for example, streets and building footprints are not visible when zoomed out
+  zoom: 10,//note that some layers have zoom limits - for example, streets and building footprints are not visible when zoomed out
   maxBounds: bounds // Sets bounds as max
 });
 
@@ -100,8 +111,8 @@ map.on('load', function () {
   'visibility': 'visible'
   },
   'paint': {
-  'circle-radius': 3.5,
-  'circle-color': 'rgba(0,153,61,1)'
+  'circle-radius': 3.7,
+  'circle-color': 'rgba(63,60,211,1)'
   },
   'source-layer': 'Dinein-6r7xs1'
   });
@@ -120,11 +131,30 @@ map.on('load', function () {
       'visibility': 'visible'
     },
     'paint': {
-      'circle-radius': 3.5,
-      'circle-color': 'rgba(255,20,19,1)'
+      'circle-radius': 3.7,
+      'circle-color': 'rgba(220,83,86,1)'
     },
     'source-layer': 'TempClosed-5wly9c'
     });
+//others
+map.addSource('others-9uf3ra', {
+      type: 'vector',
+      url: 'mapbox://yw3563.10o9sucf'
+    });
+    map.addLayer({
+      'id': 'Others',
+      'type': 'circle',
+      'source': 'others-9uf3ra',
+      'layout': {
+        // make layer visible by default
+        'visibility': 'visible'
+      },
+      'paint': {
+        'circle-radius': 3.7,
+        'circle-color': 'rgba(66,177,255,1)'
+      },
+      'source-layer': 'others-9uf3ra'
+      });
 
     //Outdoor Seating data
     map.addSource('OutdoorSeating-5i00h4', {
@@ -140,32 +170,15 @@ map.on('load', function () {
         'visibility': 'visible'
       },
       'paint': {
-        'circle-radius': 3.5,
-        'circle-color': 'rgba(50,32,254,1)'
+        'circle-radius': 3.7,
+        'circle-color': 'rgba(40,206,188,1)'
       },
       'source-layer': 'OutdoorSeating-5i00h4'
       });
       // all
-      map.addSource('RESTAURANT-0qsocl', {
-        type: 'vector',
-        url: 'mapbox://yw3563.b0g68le7'
-      });
-      map.addLayer({
-        'id': 'All Restaurants',
-        'type': 'circle',
-        'source': 'RESTAURANT-0qsocl',
-        'layout': {
-          // make layer visible by default
-          'visibility': 'visible'
-        },
-        'paint': {
-          'circle-radius': 3.5,
-          'circle-color': 'rgba(198,165,83,1)'
-        },
-        'source-layer': 'RESTAURANT-0qsocl'
-        });
 
-var toggleableLayerIds = ['All Restaurants','Dine In', 'Temporarily Closed', 'Outdoor Seating'];
+
+var toggleableLayerIds = ['Dine In', 'Temporarily Closed', 'Outdoor Seating','Others'];
 
 for (var i = 0; i < toggleableLayerIds.length; i++) {
   var id = toggleableLayerIds[i];
@@ -225,8 +238,24 @@ console.log(id)
           },
           'geometry': {
             'type': 'Point',
-            'coordinates': [-74.028, 40.725]
+            'coordinates': [-74.018, 40.755]
           }
+
+        },
+
+        {
+          'type': 'Feature',
+          'properties': {
+            'description':
+            '<strong>Closure of Indoor Dining</strong><p>To mitigate the spread of this disease, food establishments will not be permitted to offer indoor dining beginning on Monday, December 14. Food establishments that are located outside of State-designated “red zones” are still permitted to offer take-out, delivery, and outdoor dining. Food establishments that are located within State-designated “red zones” may continue to offer take-out and delivery only. </p>',
+            'title': 'Closure of Indoor Dining',
+            'icon': 'restaurant-pizza'
+          },
+          'geometry': {
+            'type': 'Point',
+            'coordinates': [-73.967, 40.74]
+          }
+
         }
       ]
     }
@@ -238,7 +267,7 @@ console.log(id)
       'source': 'places',
       'layout': {
         'icon-image': '{icon}-15',
-        'icon-size': 4,
+        'icon-size': 2,
         'icon-allow-overlap': true,
         'text-field': ['get', 'title'],
         'text-font': [
@@ -247,7 +276,10 @@ console.log(id)
         ],
         'text-offset': [0, 1.25],
         'text-anchor': 'top'
-      }
+      },
+      'paint': {
+    "text-color": "#ffffff"
+  }
     });
   // on click
     map.on('click', 'places', function (e) {
@@ -276,7 +308,7 @@ console.log(id)
 // Add an image to use as a custom marker & a box
 //box: https://docs.mapbox.com/mapbox-gl-js/example/add-image-stretchable/
 map.loadImage(
-'https://raw.githubusercontent.com/CenterForSpatialResearch/fall2020_data_visualization/master/mapbox/star.png',
+'https://raw.githubusercontent.com/hc3030/fall2020_data_visualization/master/restaurant/pie.jpg',
   function (error, image) {
       if (error) throw error;
       map.addImage('custom-marker', image);
@@ -291,17 +323,18 @@ map.loadImage(
             'type': 'Feature',
             'properties': {
               'description':
-                '<strong>Maki Kosaka</strong><p>Provide both indoor dining and out door dining services. "Safe and thoughtful outdoor dining setup with heat lamps!" by Yoonie.Y. on Yelp.</p>',
-                'title': 'Maki Kosaka'
+                '<strong></strong><p></p>',
+
              },
             'geometry': {
               'type': 'Point',
-              'coordinates': [-73.9938224, 40.7402921]
+              'coordinates': [-73.940, 40.7102921]
             },
 
             }
         ]
       }
+
 });
 
 // Add a symbol layer for shakeshack
@@ -312,7 +345,7 @@ map.addLayer({
           'layout': {
             'icon-image': 'custom-marker',
             'icon-allow-overlap': true,
-            'icon-size': 0.1,
+            'icon-size': 0.25,
             'text-field': ['get', 'title'],
             'text-font': [
               'Open Sans Semibold',
@@ -323,37 +356,7 @@ map.addLayer({
           }
         });
 // on click
-        map.on('click', 'points', function (e) {
-          var coordinates = e.features[0].geometry.coordinates.slice();
-          var description = e.features[0].properties.description;
 
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-}
-
-          new mapboxgl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(description)
-          .addTo(map);
-        });
-
-// Change the cursor to a pointer when the mouse is over the places layer.
-          map.on('mouseenter', 'places', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-
-// Change it back to a pointer when it leaves.
-          map.on('mouseleave', 'places', function () {
-            map.getCanvas().style.cursor = '';
-          });
-
-  map.on('click', 'points', function (e) {
-          var mouseData = e//this is all the click information from the mouse
-          //8.flyto
-          //we get the mouseData again, and we zoom in
-          flyTo(mouseData)
-
-        })
   }
 )
 
